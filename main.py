@@ -1,12 +1,3 @@
-""""
-print("Please choose a scheduling algorithm.")
-
-print("1. Round Robin")
-print("2. Non-Preemptive Shortest Job First")
-print("3. Pre-emptive Shortest Job First")
-print("4. Non-Preemptive Priority")
-"""
-
 def rr():
     print("RR")
 
@@ -44,7 +35,13 @@ def npsjf():
 
         return avgWaitingTime, avgTurnaroundTime
 
-    numOfProcesses = int(input("Enter the number of processes: "))
+    while True:
+        try:
+            numOfProcesses = int(input("Enter the number of processes: "))
+            break
+        except ValueError as ve:
+            print("You have entered wrong value.\n")
+
     print()
 
     #allocate size according to number of processes
@@ -57,9 +54,20 @@ def npsjf():
     avgTurnaroundTime = 0
 
     for i in range(numOfProcesses):
-        print(f"Enter details for Process P{i}:")
-        burstTime[i] = int(input("Burst Time: "))
-        arrivalTime[i] = int(input("Arrival Time: "))
+
+        while True:
+            try:
+                print(f"Enter details for Process P{i}:")
+                inputBurstTime = int(input("Burst Time: "))
+                inputArrivalTime = int(input("Arrival Time: "))
+                break
+            except ValueError as ve:
+                print("You have entered wrong value.\n")
+                inputBurstTime = 0
+                inputArrivalTime = 0
+
+        burstTime[i] = inputBurstTime
+        arrivalTime[i] = inputArrivalTime
         print()
 
     # Sort processes by their arrival time
@@ -140,7 +148,13 @@ def psjf():
             print(f"{proc} |", end=" ")
         print("\n------------------------------------------------------------------------")
 
-    numOfProcesses = int(input("Enter the number of processes: "))
+    while True:
+        try:
+            numOfProcesses = int(input("Enter the number of processes: "))
+            break
+        except ValueError as ve:
+            print("You have entered wrong value.\n")
+
     print()
 
     arrivalTime = [0] * numOfProcesses
@@ -154,21 +168,28 @@ def psjf():
     ganttChart = []  # Dynamic size for Gantt Chart
 
     for i in range(numOfProcesses):
-        print(f"Enter details for Process P{i}:")
-        burstTime[i] = int(input("Burst Time: "))
+
+        while True:
+            try:
+                print(f"Enter details for Process P{i}:")
+                inputBurstTime = int(input("Burst Time: "))
+                inputArrivalTime = int(input("Arrival Time: "))
+                break
+            except ValueError as ve:
+                print("You have entered wrong value.\n")
+                inputBurstTime = 0
+                inputArrivalTime = 0
+
+        burstTime[i] = inputBurstTime
         tempBurstTime[i] = burstTime[i]
-        arrivalTime[i] = int(input("Arrival Time: "))
+        arrivalTime[i] = inputArrivalTime
         print()
 
     currentTime = 0
     completed = [False] * numOfProcesses
     processCount = 0
 
-    avgWaitingTime, avgTurnaroundTime = calculate(
-        numOfProcesses, arrivalTime, burstTime, tempBurstTime, completed, currentTime,
-        processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime,
-        ganttChart
-    )
+    avgWaitingTime, avgTurnaroundTime = calculate(numOfProcesses, arrivalTime, burstTime, tempBurstTime, completed, currentTime, processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime, ganttChart)
 
     # Displaying the Gantt Chart
     display_gantt_chart(ganttChart)
@@ -231,7 +252,13 @@ def pri():
 
         return avgWaitingTime, avgTurnaroundTime
 
-    numOfProcesses = int(input("Enter the number of processes: "))
+    while True:
+        try:
+            numOfProcesses = int(input("Enter the number of processes: "))
+            break
+        except ValueError as ve:
+            print("You have entered wrong value.\n")
+
     print()
 
     arrivalTime = [0] * numOfProcesses
@@ -244,10 +271,23 @@ def pri():
     avgTurnaroundTime = 0
 
     for i in range(numOfProcesses):
-        print(f"Enter details for Process P{i}:")
-        burstTime[i] = int(input("Burst Time: "))
-        arrivalTime[i] = int(input("Arrival Time: "))
-        priority[i] = int(input("Priority: "))
+
+        while True:
+            try:
+                print(f"Enter details for Process P{i}:")
+                inputBurstTime = int(input("Burst Time: "))
+                inputArrivalTime = int(input("Arrival Time: "))
+                inputPriority = int(input("Priority: "))
+                break
+            except ValueError as ve:
+                print("You have entered wrong value.\n")
+                inputBurstTime = 0
+                inputArrivalTime = 0
+                inputPriority = 0
+
+        burstTime[i] = inputBurstTime
+        arrivalTime[i] = inputArrivalTime
+        priority[i] = inputPriority
         print()
 
     # Sort processes by their arrival time and priority
@@ -283,24 +323,30 @@ def pri():
     print(f"Total Average Waiting Time: {avgWaitingTime}")
     print(f"Total Average Turnaround Time: {avgTurnaroundTime}")
 
-pri()
+print("Please choose a scheduling algorithm.")
+print("1. Round Robin")
+print("2. Non-Preemptive Shortest Job First")
+print("3. Pre-emptive Shortest Job First")
+print("4. Non-Preemptive Priority")
 
-"""
 while True:
     try:
         selection = int(input("Please enter a number (1-4): "))
         if selection < 1 or selection > 4:
-            print("Number out of range.")
+            print("Number out of range.\n")
         else:
             if selection ==  1:
+                print()
                 rr()
             elif selection == 2:
+                print()
                 npsjf()
             elif selection == 3:
+                print()
                 psjf()
             else:
+                print()
                 pri()
             break
     except ValueError as ve:
-        print("You have entered wrong value.")
-"""
+        print("You have entered wrong value.\n")
