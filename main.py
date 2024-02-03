@@ -187,9 +187,103 @@ def psjf():
     print(f"Total Average Turnaround Time: {avgTurnaroundTime}")
 
 def pri():
-    print("priority")
+    def calculate(numOfProcesses, arrivalTime, burstTime, priority, completed, currentTime, processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime):
 
-psjf()
+        while processCount < numOfProcesses:
+            highestPriorityJob = -1
+            highestPriority = float('inf')
+
+            for i in range(numOfProcesses):
+                if not completed[i] and arrivalTime[i] <= currentTime and priority[i] < highestPriority:
+                    highestPriority = priority[i]
+                    highestPriorityJob = i
+
+            if highestPriorityJob != -1:
+                # If burst time is the same, choose FCFS
+                samePriorityCount = 0
+                for i in range(numOfProcesses):
+                    if not completed[i] and arrivalTime[i] <= currentTime and priority[i] == highestPriority and burstTime[i] == burstTime[highestPriorityJob]:
+                        samePriorityCount += 1
+
+                if samePriorityCount > 1:
+                    # If multiple processes have the same priority and burst time, choose FCFS
+                    for i in range(numOfProcesses):
+                        if not completed[i] and arrivalTime[i] <= currentTime and priority[i] == highestPriority and burstTime[i] == burstTime[highestPriorityJob]:
+                            highestPriorityJob = i
+                            break
+
+                finishingTime[highestPriorityJob] = currentTime + burstTime[highestPriorityJob]
+                currentTime = finishingTime[highestPriorityJob]
+                turnaroundTime[highestPriorityJob] = finishingTime[highestPriorityJob] - arrivalTime[highestPriorityJob]
+                waitingTime[highestPriorityJob] = turnaroundTime[highestPriorityJob] - burstTime[highestPriorityJob]
+                avgWaitingTime += waitingTime[highestPriorityJob]
+                avgTurnaroundTime += turnaroundTime[highestPriorityJob]
+                completed[highestPriorityJob] = True
+                processCount += 1
+
+                print(f"  P{highestPriorityJob}  |", end='')
+
+            else:
+                currentTime += 1
+
+        avgWaitingTime /= numOfProcesses
+        avgTurnaroundTime /= numOfProcesses
+
+        return avgWaitingTime, avgTurnaroundTime
+
+    numOfProcesses = int(input("Enter the number of processes: "))
+    print()
+
+    arrivalTime = [0] * numOfProcesses
+    burstTime = [0] * numOfProcesses
+    waitingTime = [0] * numOfProcesses
+    finishingTime = [0] * numOfProcesses
+    turnaroundTime = [0] * numOfProcesses
+    priority = [0] * numOfProcesses
+    avgWaitingTime = 0
+    avgTurnaroundTime = 0
+
+    for i in range(numOfProcesses):
+        print(f"Enter details for Process P{i}:")
+        burstTime[i] = int(input("Burst Time: "))
+        arrivalTime[i] = int(input("Arrival Time: "))
+        priority[i] = int(input("Priority: "))
+        print()
+
+    # Sort processes by their arrival time and priority
+    for i in range(numOfProcesses - 1):
+        for j in range(numOfProcesses - i - 1):
+            if arrivalTime[j] > arrivalTime[j + 1] or (arrivalTime[j] == arrivalTime[j + 1] and priority[j] > priority[j + 1]):
+                # Swap arrival time, burst time, and priority
+                arrivalTime[j], arrivalTime[j + 1] = arrivalTime[j + 1], arrivalTime[j]
+                burstTime[j], burstTime[j + 1] = burstTime[j + 1], burstTime[j]
+                priority[j], priority[j + 1] = priority[j + 1], priority[j]
+
+    currentTime = 0
+
+    print("\nGantt Chart:")
+    print("|", end='')
+
+    completed = [False] * numOfProcesses
+    processCount = 0
+
+    avgWaitingTime, avgTurnaroundTime = calculate(numOfProcesses, arrivalTime, burstTime, priority, completed, currentTime, processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime)
+
+    # Displaying the table
+    print()
+    print("\nDetails Table:")
+    print("--------------------------------------------------------------------------------------------------------------------------------")
+    print("Process\t      Arrival Time\t      Burst Time\t      Priority\t      Finishing Time\t      Turnaround Time\t      Waiting Time")
+    print("--------------------------------------------------------------------------------------------------------------------------------")
+
+    for i in range(numOfProcesses):
+        print(f"P{i}\t\t{arrivalTime[i]}\t\t\t {burstTime[i]}\t\t\t {priority[i]}\t\t\t {finishingTime[i]}\t\t\t  {turnaroundTime[i]}\t\t\t{waitingTime[i]}")
+
+    print("---------------------------------------------------------------------------------------------------------------------------------")
+    print(f"Total Average Waiting Time: {avgWaitingTime}")
+    print(f"Total Average Turnaround Time: {avgTurnaroundTime}")
+
+pri()
 
 """
 while True:
