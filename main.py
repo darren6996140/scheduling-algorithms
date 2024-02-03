@@ -95,12 +95,101 @@ def npsjf():
     print(f"Total Average Turnaround Time: {avgTurnaroundTime}")
 
 def psjf():
-    print("P SJF")
+    def calculate(numOfProcesses, arrivalTime, burstTime, tempBurstTime, completed, currentTime, processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime, ganttChart):
+
+        while processCount < numOfProcesses:
+            shortestJob = -1
+            shortestBurst = float('inf')
+
+            for i in range(numOfProcesses):
+                if not completed[i] and arrivalTime[i] <= currentTime and tempBurstTime[i] < shortestBurst:
+                    shortestBurst = tempBurstTime[i]
+                    shortestJob = i
+
+            if shortestJob != -1:
+                if ganttChart and ganttChart[-1] != f"P{shortestJob}":
+                    ganttChart.append(f"P{shortestJob}")
+                elif not ganttChart:
+                    ganttChart.append(f"P{shortestJob}")
+
+                tempBurstTime[shortestJob] -= 1
+                if tempBurstTime[shortestJob] == 0:
+                    finishingTime[shortestJob] = currentTime + 1
+                    completed[shortestJob] = True
+                    processCount += 1
+                    turnaroundTime[shortestJob] = finishingTime[shortestJob] - arrivalTime[shortestJob]
+                    waitingTime[shortestJob] = turnaroundTime[shortestJob] - burstTime[shortestJob]
+                    avgWaitingTime += waitingTime[shortestJob]
+                    avgTurnaroundTime += turnaroundTime[shortestJob]
+            else:
+                ganttChart.append("-")
+
+            currentTime += 1
+
+        if numOfProcesses > 0:
+            avgWaitingTime /= numOfProcesses
+            avgTurnaroundTime /= numOfProcesses
+
+        return avgWaitingTime, avgTurnaroundTime
+
+    def display_gantt_chart(gantt_chart):
+        print("\nGantt Chart:")
+        print("------------------------------------------------------------------------")
+        print("|", end=" ")
+        for proc in gantt_chart:
+            print(f"{proc} |", end=" ")
+        print("\n------------------------------------------------------------------------")
+
+    numOfProcesses = int(input("Enter the number of processes: "))
+    print()
+
+    arrivalTime = [0] * numOfProcesses
+    burstTime = [0] * numOfProcesses
+    tempBurstTime = [0] * numOfProcesses
+    waitingTime = [0] * numOfProcesses
+    finishingTime = [0] * numOfProcesses
+    turnaroundTime = [0] * numOfProcesses
+    avgWaitingTime = 0
+    avgTurnaroundTime = 0
+    ganttChart = []  # Dynamic size for Gantt Chart
+
+    for i in range(numOfProcesses):
+        print(f"Enter details for Process P{i}:")
+        burstTime[i] = int(input("Burst Time: "))
+        tempBurstTime[i] = burstTime[i]
+        arrivalTime[i] = int(input("Arrival Time: "))
+        print()
+
+    currentTime = 0
+    completed = [False] * numOfProcesses
+    processCount = 0
+
+    avgWaitingTime, avgTurnaroundTime = calculate(
+        numOfProcesses, arrivalTime, burstTime, tempBurstTime, completed, currentTime,
+        processCount, finishingTime, turnaroundTime, waitingTime, avgWaitingTime, avgTurnaroundTime,
+        ganttChart
+    )
+
+    # Displaying the Gantt Chart
+    display_gantt_chart(ganttChart)
+
+    # Displaying the table
+    print("\nDetails Table:")
+    print("--------------------------------------------------------------------------------------------------------------------------------------------")
+    print("Process\t      Arrival Time\t      Burst Time\t      Finishing Time\t      Turnaround Time\t      Waiting Time")
+    print("--------------------------------------------------------------------------------------------------------------------------------------------")
+
+    for i in range(numOfProcesses):
+        print(f"P{i}\t\t{arrivalTime[i]}\t\t\t {burstTime[i]}\t\t\t {finishingTime[i]}\t\t\t  {turnaroundTime[i]}\t\t\t{waitingTime[i]}")
+
+    print("--------------------------------------------------------------------------------------------------------------------------------------------")
+    print(f"Total Average Waiting Time: {avgWaitingTime}")
+    print(f"Total Average Turnaround Time: {avgTurnaroundTime}")
 
 def pri():
     print("priority")
 
-npsjf()
+psjf()
 
 """
 while True:
