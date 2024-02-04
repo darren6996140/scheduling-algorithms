@@ -10,11 +10,11 @@ def rr():
             process_data.append(temporary)
             print()
 
-        time_slice = 3
+        burst_time = 3
 
-        schedulingProcess(process_data, time_slice)
+        schedulingProcess(process_data, burst_time)
 
-    def schedulingProcess(process_data, time_slice):
+    def schedulingProcess(process_data, burst_time):
         start_time = []
         exit_time = []
         executed_process = []
@@ -56,19 +56,19 @@ def rr():
             if len(ready_queue) == 0 and len(normal_queue) == 0:
                 break
             if len(ready_queue) != 0:
-                if ready_queue[0][2] > time_slice:
+                if ready_queue[0][2] > burst_time:
                     #If process has remaining burst time greater than the time slice, it will execute for a time period equal to time slice and then switch
                     start_time.append(s_time)
-                    s_time = s_time + time_slice
+                    s_time = s_time + burst_time
                     e_time = s_time
                     exit_time.append(e_time)
                     executed_process.append(ready_queue[0][0])
                     for j in range(len(process_data)):
                         if process_data[j][0] == ready_queue[0][0]:
                             break
-                    process_data[j][2] = process_data[j][2] - time_slice
+                    process_data[j][2] = process_data[j][2] - burst_time
                     ready_queue.pop(0)
-                elif ready_queue[0][2] <= time_slice:
+                elif ready_queue[0][2] <= burst_time:
 
                     #If a process has a remaining burst time less than or equal to time slice, it will complete its execution
 
@@ -87,20 +87,20 @@ def rr():
             elif len(ready_queue) == 0:
                 if s_time < normal_queue[0][1]:
                     s_time = normal_queue[0][1]
-                if normal_queue[0][2] > time_slice:
+                if normal_queue[0][2] > burst_time:
 
                     #If process has remaining burst time greater than the time slice, it will execute for a time period equal to time slice and then switch
 
                     start_time.append(s_time)
-                    s_time = s_time + time_slice
+                    s_time = s_time + burst_time
                     e_time = s_time
                     exit_time.append(e_time)
                     executed_process.append(normal_queue[0][0])
                     for j in range(len(process_data)):
                         if process_data[j][0] == normal_queue[0][0]:
                             break
-                    process_data[j][2] = process_data[j][2] - time_slice
-                elif normal_queue[0][2] <= time_slice:
+                    process_data[j][2] = process_data[j][2] - burst_time
+                elif normal_queue[0][2] <= burst_time:
 
                     #If a process has a remaining burst time less than or equal to time slice, it will complete its execution
 
